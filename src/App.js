@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Button, } from "react-bootstrap";
+import { Container, Button } from "react-bootstrap";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { v4 as uuidv4 } from "uuid";
 import Login from "./components/Login";
@@ -75,14 +75,18 @@ function App() {
         <Login getImages={getImages} />
       ) : (
         <>
-          <Workflows/>
-          <h1>Your images</h1>
-          <Button onClick={() => signOut()}>Log Out</Button>
-          <p>current user: {user.email}</p>
-          <p>upload a Image</p>
+          <h1>Your Images </h1>
+          
+          <Button class="btn btn-danger" onClick={() => signOut()}>Log Out</Button>
+          <p>
+            current user: {user.email} 
+          </p>
+          <p>upload a Image </p>
+
           <ImageUploadForm uploadImage={uploadImage} />
           <hr />
-          <h3>your image</h3>
+          
+          <h3><Workflows /></h3>
           <ImageList user={user} images={images} deleteImage={deleteImage} />
         </>
       )}
