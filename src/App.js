@@ -77,7 +77,7 @@ function App() {
         <>
           <h1>Your Images </h1>
           
-          <Button class="btn btn-danger" onClick={() => signOut()}>Log Out</Button>
+          <Button className="btn btn-danger" onClick={() => signOut()}>Log Out</Button>
           <p>
             current user: {user.email} 
           </p>

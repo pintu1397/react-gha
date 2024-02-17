@@ -1,14 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App"
+import App from "./App";
 import "./index.css";
-import reportWebVitals from './reportWebVitals';
+
+import reportWebVitals from "./reportWebVitals";
 
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { createClient } from "@supabase/supabase-js";
-const apiUrl = "https://qbcybijsurnlebeyrere.supabase.co";
-const apiKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiY3liaWpzdXJubGViZXlyZXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU3MzA4MTQsImV4cCI6MjAyMTMwNjgxNH0.bCDsliFJxm3WrNz5-bz6cRMYfFyude1casRiLuKz8mo";
+
+const apiUrl = process.env.REACT_APP_SUPABASE_URL;
+
+
+const apiKey = process.env.REACT_APP_SUPABASE_KEY;
+  
 
 const supabase = createClient(apiUrl, apiKey);
 

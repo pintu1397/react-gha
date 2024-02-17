@@ -12,8 +12,8 @@ const Workflows = () => {
   const triggerWorkflow = async () => {
     try {
       const octokit = new Octokit({
-        auth: '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',
-        //"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", // Replace with your GitHub access token or authentication method
+        auth: process.env.REACT_APP_SECRET_GITHUB_TOKEN,
+        
         baseUrl: "https://api.github.com",
       });
 //https://github.com/pintu1397/react-gha/actions/workflows/main.yaml
@@ -31,7 +31,7 @@ const Workflows = () => {
           }
         }
       );
-      console.log(response);
+      //console.log(response);
       setResponseMessage(
         `clicked successfully`
         //`Workflow triggered successfully`
@@ -43,7 +43,7 @@ const Workflows = () => {
 // Button for Trigger Workflow
   return (
     <div>
-      <Button class="btn btn-secondary" onClick={triggerWorkflow}>refresh</Button>
+      <Button className="btn btn-secondary" onClick={triggerWorkflow}>refresh</Button>
 
       {responseMessage && <p>{responseMessage}</p>}
     </div>
