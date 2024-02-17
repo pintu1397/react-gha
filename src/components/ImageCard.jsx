@@ -8,7 +8,7 @@ const ImageCard = ({ CDNURL, user, image, deleteImage }) => {
       <Card.Img variant="top" src={`${CDNURL}${user.id}/${image.name}`} />
       <Card.Body>
         <Button variant="danger" onClick={() => deleteImage(image.name)}>
-          Delete Image
+          Delete
         </Button>
       </Card.Body>
     </Card>
