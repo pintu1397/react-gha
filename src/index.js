@@ -6,8 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { createClient } from "@supabase/supabase-js";
 
- require('dotenv').config()
-console.log(process.env)
+
 const apiUrl = process.env.REACT_APP_SUPABASE_URL;
 
 
