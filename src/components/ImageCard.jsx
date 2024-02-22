@@ -22,11 +22,11 @@ const ImageCard = ({ CDNURL, user, image, deleteImage }) => {
         src={`${CDNURL}${user.id}/${image.name}`}
         onClick={handleImageClick}
       />
-      <Card.Body>
+      {/* <Card.Body>
         <Button variant="danger" onClick={() => deleteImage(image.name)}>
           Delete
         </Button>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
     <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
@@ -43,6 +43,9 @@ const ImageCard = ({ CDNURL, user, image, deleteImage }) => {
           <Button variant="secondary" onClick={handleCloseModal}>
             Close
           </Button>
+          <Button variant="danger" onClick={() => deleteImage(image.name)}>
+          Delete
+        </Button>
         </Modal.Footer>
       </Modal>
     </>
