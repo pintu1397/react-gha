@@ -33,36 +33,20 @@ const Workflows = () => {
         }
       );
 
-      // const statusResponse = await octokit.request('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
-      //   owner: 'pintu1397',
-      //   repo: 'react-gha',
-      //   workflow_id: 'main.yaml',
-      //   headers: {
-      //     'X-GitHub-Api-Version': '2022-11-28'
-      //   }
-      // })
-      // console.log(statusResponse);
-      // let n = statusResponse.data.workflow_runs.length;
-      // console.log(n);
-      // console.log(statusResponse.data.workflow_runs[n-1].status);
-      // console.log(response);
       const statusResponse = await octokit.request('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
         owner: 'pintu1397',
         repo: 'react-gha',
         workflow_id: 'main.yaml',
         headers: {
           'Accept': 'application/vnd.github.v3+json',
-          'Authorization': `token ${process.env.REACT_APP_SECRET_GITHUB_TOKEN}`,
         }
       });
       
       // Assuming the last run is at index 0
-      const lastRun = statusResponse.data.workflow_runs[0];
+      const lastRun = statusResponse.data.workflow_runs[55];
       
       console.log(lastRun.status);
-      
-      
-      //console.log(lastRun.status);
+
       setResponseMessage(
         `clicked successfully`
         //`Workflow triggered successfully`
