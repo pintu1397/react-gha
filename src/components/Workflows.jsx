@@ -32,7 +32,7 @@ const Workflows = () => {
           }
         }
       );
-      //console.log(response);
+      console.log(response);
       setResponseMessage(
         `clicked successfully`
         //`Workflow triggered successfully`

@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "react-gha-31886"
-  }
+    "default": "react-gha-31886",
+    "production": "react-gha-31886"
+  },
+  "targets": {},
+  "etags": {}
 }

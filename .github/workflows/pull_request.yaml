@@ -1,0 +1,33 @@
+name: 'PR Tasks Completed Check'
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  task-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run Main Workflow
+        id: main-workflow
+        run: |
+          # Run your main workflow here
+          # This could include running specific jobs or steps
+
+      - name: Check Main Workflow Completion
+        run: |
+          # Check the status of your main workflow or specific job
+          # For example, check the completion status using GitHub API
+          status=$(curl -s -X GET -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ steps.main-workflow.outputs.run-id }}" \
+          | jq -r .status)
+
+          if [ "$status" == "completed" ]; then
+            echo "Main Workflow completed successfully!"
+          else
+            echo "Main Workflow is still running or failed."
+            exit 1
+          fi
