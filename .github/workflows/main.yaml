@@ -1,59 +1,114 @@
-name: Firebase Deployment
-on:
+name: Deploy to Firebase Hosting on push
+"on":
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  checkout_install_build:
     runs-on: ubuntu-latest
-    
-      
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2.3.2
-      - name: Install Dependencies
-        run: npm install      
-      - name: Build
+      - name: Make a POST request on process initation
+        run: |
+          curl -X POST 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history' \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{ "id": ${{ github.run_id }}, "deployment_status": "Initiating deployment, syncing repository" }'
+
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
+      - name: Make a PATCH request when the dependency installation has started
+        run: |
+          curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{ "deployment_status": "Preparing production environment, installing dependencies" }'
+
+      - name: install-dependencies
+        run: npm install
+
+      - name: Make a PATCH request when the build process has started
+        run: |
+          curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{ "deployment_status": "Building application for the deployment" }'
+
+      - name: build
         env:
           REACT_APP_SUPABASE_URL: ${{secrets.REACT_APP_SUPABASE_URL}}
           REACT_APP_SUPABASE_KEY: ${{secrets.REACT_APP_SUPABASE_KEY}}
-          REACT_APP_SECRET_GITHUB_TOKEN: ${{secrets.AUTH_TOKEN}}
-          CI: false     
+          GITHUB_TOKEN_TO_RUN_WORKFLOW: ${{secrets.TOKEN_TO_RUN_WORKFLOW}}
+          CI: false
         run: npm run build
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v2
         with:
           name: build
           path: build
+
   deploy:
-    name: Deploy
-    needs: build
     runs-on: ubuntu-latest
+    needs: checkout_install_build
     steps:
+      - name: Make a PATCH request when deployment to firebase is started
+        run: |
+          curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{ "deployment_status": "Initiating deployment to Firebase" }'
+
       - name: Checkout Repo
         uses: actions/checkout@v2.3.2
+
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
           name: build
           path: build
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
+
+      - name: deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          args: deploy --only hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          check-status:
-            
-  check-status: 
-    name: Check Status
-    needs: [build, deploy]
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_IP_RISINGSTAR }}"
+          channelId: live
+          projectId: ip-risingstar
+
+  post_request_on_deployment_failure:
+    needs: deploy
+    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v2.3.2
-    - name: Get Workflow Status
-      run: echo "Workflow status is ${{ job.status }}"
+      - name: Make PATCH request on deployment failure
+        run: |
+          curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{ "deployment_status": "Failed to deploy the application" }'
+
+  post_request_on_deployment_success:
+    needs: deploy
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make PATCH request on successful deployment
+        run: |
+          curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{ "deployment_status": "Deployment successful: Your application is live" }'
