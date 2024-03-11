@@ -12,8 +12,8 @@ jobs:
       - name: Make a POST request on process initation
         run: |
           curl -X POST 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history' \
-            -H "apikey: ${{secrets.REACT_APP_SUPABASE_KEY}}" \
-            -H "Authorization: Bearer ${{secrets.REACT_APP_SUPABASE_KEY}}" \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{ "id": ${{ github.run_id }}, "deployment_status": "Initiating deployment, syncing repository" }'
@@ -24,8 +24,8 @@ jobs:
       - name: Make a PATCH request when the dependency installation has started
         run: |
           curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
-            -H "apikey: ${{secrets.REACT_APP_SUPABASE_KEY}}" \
-            -H "Authorization: Bearer ${{secrets.REACT_APP_SUPABASE_KEY}}" \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{ "deployment_status": "Preparing production environment, installing dependencies" }'
@@ -36,8 +36,8 @@ jobs:
       - name: Make a PATCH request when the build process has started
         run: |
           curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
-            -H "apikey: ${{secrets.REACT_APP_SUPABASE_KEY}}" \
-            -H "Authorization: Bearer ${{secrets.REACT_APP_SUPABASE_KEY}}" \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{ "deployment_status": "Building application for the deployment" }'
@@ -62,8 +62,8 @@ jobs:
       - name: Make a PATCH request when deployment to firebase is started
         run: |
           curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
-            -H "apikey: ${{secrets.REACT_APP_SUPABASE_KEY}}" \
-            -H "Authorization: Bearer ${{secrets.REACT_APP_SUPABASE_Key}}" \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{ "deployment_status": "Initiating deployment to Firebase" }'
@@ -80,7 +80,7 @@ jobs:
       - name: deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          repoToken: "${{ secrets.AUTH_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_IP_RISINGSTAR }}"
           channelId: live
           projectId: ip-risingstar
@@ -93,8 +93,8 @@ jobs:
       - name: Make PATCH request on deployment failure
         run: |
           curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
-            -H "apikey: ${{secrets.REACT_APP_SUPABASE_KEY}}" \
-            -H "Authorization: Bearer ${{secrets.REACT_APP_SUPABASE_KEY}}" \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{ "deployment_status": "Failed to deploy the application" }'
@@ -107,8 +107,8 @@ jobs:
       - name: Make PATCH request on successful deployment
         run: |
           curl -X PATCH 'https://qbcybijsurnlebeyrere.supabase.co/rest/v1/deployment_history?id=eq.${{github.run_id}}' \
-            -H "apikey: ${{secrets.REACT_APP_SUPABASE_KEY}}" \
-            -H "Authorization: Bearer ${{secrets.REACT_APP_SUPABASE_KEY}}" \
+            -H "apikey: ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
+            -H "Authorization: Bearer ${{secrets.SUPABASE_SERVICE_ROLE_TOKEN}}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{ "deployment_status": "Deployment successful: Your application is live" }'
