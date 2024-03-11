@@ -81,7 +81,7 @@ jobs:
         uses: ipaul1996/firebase-deploy-action@v1.2
         with:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_IP_RISINGSTAR }}"
-          deploymentType: live
+          deploymentType: preview
     outputs:
       deploy_url: ${{ steps.deploy-firebase.outputs.deploy_url }}
       deployment_type: ${{ steps.deploy-firebase.outputs.deployment_type }}
