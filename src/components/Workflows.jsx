@@ -5,19 +5,13 @@ import { Button } from "react-bootstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const Workflows = ({
-  setDeploymentStatus,
-  setShowAlert,
-  countSeconds,
-  setFinalStateCompleted,
-}) => {
+const Workflows = ({setDeploymentStatus, setShowAlert, countSeconds, setFinalStateCompleted }) => {
   const [responseMessage, setResponseMessage] = useState(null);
 
   const triggerWorkflow = async () => {
     try {
       const octokit = new Octokit({
         auth: process.env.REACT_APP_SECRET_GITHUB_TOKEN,
-
         baseUrl: "https://api.github.com",
       });
       const response = await octokit.request(
@@ -27,14 +21,12 @@ const Workflows = ({
           repo: "react-gha",
           workflow_id: "main.yaml",
           ref: "main",
-
           headers: {
             "X-GitHub-Api-Version": "2022-11-28",
             Accept: "application/vnd.github.v3+json",
           },
         }
       );
-      //console.log(response);
       setShowAlert(true);
       setFinalStateCompleted(false);
       setDeploymentStatus("Deployment Initiated");
