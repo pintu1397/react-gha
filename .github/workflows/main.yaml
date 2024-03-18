@@ -76,6 +76,7 @@ jobs:
           name: build
           path: build
 
+          
       - name: deploy-firebase
         id: deploy-firebase
         uses: ipaul1996/firebase-deploy-action@v1.2
