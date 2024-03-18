@@ -6,8 +6,6 @@ import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Workflows = ({setDeploymentStatus, setShowAlert, countSeconds, setFinalStateCompleted }) => {
-  const [responseMessage, setResponseMessage] = useState(null);
-
   const triggerWorkflow = async () => {
     try {
       const octokit = new Octokit({
@@ -27,28 +25,26 @@ const Workflows = ({setDeploymentStatus, setShowAlert, countSeconds, setFinalSta
           },
         }
       );
+      
       setShowAlert(true);
       setFinalStateCompleted(false);
       setDeploymentStatus("Deployment Initiated");
       countSeconds();
+
+
     } catch (error) {
-      setResponseMessage(`Error triggering workflow: ${error.message}`);
+      console.log(`Error triggering workflow: ${error.message}`);
     }
   };
-  // Button for Trigger Workflow
+
   return (
     <div>
-      <Button
-        className="btn btn-secondary"
-        onClick={triggerWorkflow}
-        disabled={alert === true}
-      >
+      <Button className="btn btn-secondary" onClick={triggerWorkflow} disabled={alert === true}>
         Publish
       </Button>
-
-      {responseMessage && <p>{responseMessage}</p>}
     </div>
   );
 };
 
 export default Workflows;
+
