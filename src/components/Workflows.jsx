@@ -9,7 +9,7 @@ const Workflows = ({ workflowId, owner, repo }) => {
 
   const triggerWorkflow = async () => {
     try {
-      setDeployStatus("Deploying...");
+      setDeployStatus("Deploying...!");
 
       const octokit = new Octokit({
         auth: process.env.REACT_APP_SECRET_GITHUB_TOKEN,
@@ -23,7 +23,7 @@ const Workflows = ({ workflowId, owner, repo }) => {
           owner:"pintu1397",
           repo:"react-gha",
           workflow_id:"main.yaml",
-          ref: "main", // Assuming the workflow runs on the "main" branch (adjust if needed)
+          ref: "main", 
           headers: {
             "X-GitHub-Api-Version": "2022-11-28",
             Accept: "application/vnd.github.v3+json",
