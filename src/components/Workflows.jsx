@@ -5,10 +5,12 @@ import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Workflows = ({}) => {
-  const [jobStatus, setJobStatus] = useState(null);
+  const [deployStatus, setDeployStatus] = useState(null);
 
   const triggerWorkflow = async () => {
     try {
+      setDeployStatus("Deploying...");
+
       const owner = "pintu1397";
       const repo = "react-gha";
 
@@ -32,40 +34,31 @@ const Workflows = ({}) => {
         }
       );
 
-      // Fetch latest workflow run
-      const response = await octokit.request(
-        "GET /repos/{owner}/{repo}/actions/runs",
-        {
-          owner,
-          repo,
-          headers: {
-            Accept: "application/vnd.github.v3+json",
-          },
+      // Poll the workflow run status until it's completed
+      let runStatus = "";
+      while (runStatus !== "completed") {
+        const response = await octokit.request(
+          "GET /repos/{owner}/{repo}/actions/runs",
+          {
+            owner,
+            repo,
+            headers: {
+              Accept: "application/vnd.github.v3+json",
+            },
+          }
+        );
+        const latestRun = response.data.workflow_runs[0];
+        runStatus = latestRun.status;
+
+        if (runStatus === "completed") {
+          setDeployStatus("Completed");
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
         }
-      );
-
-      const latestRun = response.data.workflow_runs[0]; // Get the latest run
-
-      // Fetch job statuses for the latest run
-      const jobResponse = await octokit.request(
-        "GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs",
-        {
-          owner,
-          repo,
-          run_id: latestRun.id,
-          headers: {
-            Accept: "application/vnd.github.v3+json",
-          },
-        }
-      );
-      const jobs = jobResponse.data.jobs || [];
-
-      // Update job status
-      if (jobs.length > 0) {
-        setJobStatus(jobs[jobs.length-1]); // Set status of the first job (current job)
       }
     } catch (error) {
       console.log(`Error triggering workflow: ${error.message}`);
+      setDeployStatus("Failed"); // Set status to failed if an error occurs
     }
   };
 
@@ -78,11 +71,9 @@ const Workflows = ({}) => {
       >
         Publish
       </Button>
-      {/* Display job status */}
-      {jobStatus && (
-        <p>
-          Current Job Status: {`Job ${jobStatus.name} status: ${jobStatus.status}`}
-        </p>
+      {/* Display deploy status */}
+      {deployStatus && (
+        <p>{deployStatus}</p>
       )}
     </div>
   );
