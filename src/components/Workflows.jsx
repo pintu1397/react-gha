@@ -1,95 +1,53 @@
-import React, { useState, useEffect } from "react";
-import { Octokit } from "@octokit/rest";
-import { Button } from "react-bootstrap";
+//workflows.jsx
+import React, { useState } from "react";
+import { Octokit } from "octokit";
+// import {  Button } from "react-bootstrap";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
-const Workflows = ({ workflowId, owner, repo }) => {
-  const [deployStatus, setDeployStatus] = useState(null);
+const Workflows = () => {
+  const [responseMessage, setResponseMessage] = useState(null);
 
   const triggerWorkflow = async () => {
     try {
-      setDeployStatus("Deploying...!");
-
       const octokit = new Octokit({
         auth: process.env.REACT_APP_SECRET_GITHUB_TOKEN,
+        //auth: "${{secrets.WORKFLOW_GITHUB_TOKEN}}",
+
         baseUrl: "https://api.github.com",
       });
-
-      // Trigger workflow
-      await octokit.request(
+      //https://github.com/pintu1397/react-gha/actions/workflows/main.yaml
+      const response = await octokit.request(
         "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
         {
-          owner:"pintu1397",
-          repo:"react-gha",
-          workflow_id:"main.yaml",
-          ref: "main", 
+          owner: "pintu1397",
+          repo: "react-gha",
+          workflow_id: "main.yaml",
+          // Optional: ref and inputs
+          ref: "main",
+
           headers: {
             "X-GitHub-Api-Version": "2022-11-28",
-            Accept: "application/vnd.github.v3+json",
           },
         }
       );
+      //console.log(response);
+      setResponseMessage(
+        `clicked successfully`
+        //`Workflow triggered successfully`
+      );
     } catch (error) {
-      console.error(`Error triggering workflow: ${error.message}`);
-      setDeployStatus("Failed"); // Set status to failed if an error occurs
+      setResponseMessage(`Error triggering workflow: ${error.message}`);
     }
   };
-
-  // Fetch and display workflow run status
-  useEffect(() => {
-    const fetchRunStatus = async () => {
-      if (!workflowId || !owner || !repo) {
-        console.error("Missing workflow ID, owner, or repo details");
-        return;
-      }
-
-      const octokit = new Octokit({
-        auth: process.env.REACT_APP_SECRET_GITHUB_TOKEN,
-        baseUrl: "https://api.github.com",
-      });
-
-      try {
-        let runStatus = "";
-        while (runStatus !== "completed") {
-          const response = await octokit.request(
-            "GET /repos/{owner}/{repo}/actions/runs",
-            {
-              owner,
-              repo,
-              headers: {
-                Accept: "application/vnd.github.v3+json",
-              },
-            }
-          );
-          const latestRun = response.data.workflow_runs[0];
-          runStatus = latestRun.status;
-
-          if (runStatus === "completed") {
-            setDeployStatus("Completed");
-          } else {
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
-          }
-        }
-      } catch (error) {
-        console.error(`Error fetching workflow run status: ${error.message}`);
-        setDeployStatus("Failed"); // Set status to failed in case of errors
-      }
-    };
-
-    fetchRunStatus();
-  }, [workflowId, owner, repo]); // Re-run useEffect on workflow ID, owner, or repo changes
-
+  // Button for Trigger Workflow
   return (
     <div>
-      <Button
-        className="btn btn-secondary"
-        onClick={triggerWorkflow}
-        disabled={deployStatus === "Deploying"} // Disable button during deployment
-      >
+      <button style={{ padding: "20px",backgroundColor:"blue" }} onClick={triggerWorkflow}>
         Publish
-      </Button>
-      {deployStatus && <p>{deployStatus}</p>}
+      </button>
+
+      {responseMessage && <p>{responseMessage}</p>}
     </div>
   );
 };
