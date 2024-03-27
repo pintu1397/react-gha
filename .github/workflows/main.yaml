@@ -4,8 +4,18 @@ name: Deploy to Firebase Hosting on push
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      id:
+        description: 'eun identifier'
+        required: false
 
 jobs:
+  id:
+    name: Workflow ID Provider
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{github.event.inputs.id}}
+        run: echo run identifier ${{inputs.id}}
   github-context:
     name: job-context
     runs-on: ubuntu-latest
