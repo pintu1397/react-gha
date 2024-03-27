@@ -3,7 +3,7 @@ import { Octokit } from "octokit";
 
 const Workflows = () => {
   const [responseMessage, setResponseMessage] = useState(null);
-  const [workflowStatus, setWorkflowStatus] = useState("queued"); // State to store the latest workflow status
+  const [workflowStatus, setWorkflowStatus] = useState("Queued"); // State to store the latest workflow status
   let intervalId;
 
   // Function to fetch latest workflow status
@@ -52,7 +52,7 @@ const Workflows = () => {
       fetchWorkflowStatus();
 
       // Fetch latest workflow status every 5 seconds
-      intervalId = setInterval(fetchWorkflowStatus, 5000);
+      intervalId = setInterval(fetchWorkflowStatus, 1000);
     }, 30000); // Delay initial execution by 10 seconds
 
     // Clear the interval and timeout on component unmount
