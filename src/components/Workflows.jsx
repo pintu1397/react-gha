@@ -31,11 +31,14 @@ const Workflows = () => {
       const latestStatus = response.data.workflow_runs[0].status;
       console.log(latestStatus);
       setWorkflowStatus(latestStatus);
-      setResponseMessage(`Deployment status : ${latestStatus}`);
+      setResponseMessage(`Status : ${latestStatus}`);
 
       // Check if the latest job is completed
       if (latestStatus === "completed") {
         clearInterval(intervalId); // Clear interval to stop further fetches
+        setTimeout(() => {
+          setResponseMessage(null);
+        }, 5000);
       }
     } catch (error) {
       setResponseMessage(`Error fetching workflow status: ${error.message}`);
@@ -80,7 +83,7 @@ const Workflows = () => {
         }
       );
 
-      setResponseMessage(`Deployment status : ${workflowStatus}`);
+      setResponseMessage(`Status : ${workflowStatus}`);
     } catch (error) {
       setResponseMessage(`Error triggering workflow: ${error.message}`);
     }
